@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/commentview_imageview_profile"
+            android:src="@drawable/ic_account"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"/>
+        <TextView
+            android:id="@+id/commentview_textview_profile"
+            android:layout_toRightOf="@id/commentview_imageview_profile"
+            android:layout_centerInParent="true"
+            android:layout_margin="8dp"
+            android:lines="1"
+            android:textStyle="bold"
+            android:text="UserID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_centerInParent="true"
+            android:id="@+id/commentview_textview_comment"
+            android:layout_toRightOf="@id/commentview_textview_profile"
+            android:layout_margin="8dp"
+            android:lines="1"
+            android:text="UserID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+</LinearLayout>

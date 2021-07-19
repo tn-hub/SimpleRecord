@@ -1,0 +1,118 @@
+package com.tnp.simplerecord
+
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.gms.tasks.Task
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
+import com.tnp.simplerecord.navigation.*
+import com.tnp.simplerecord.navigation.util.FcmPush
+import kotlinx.android.synthetic.main.activity_main.*
+
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        // nav 리스너 연결
+        bottom_navigation.setOnNavigationItemSelectedListener(this);
+        // 앨범 권한 얻기
+        ActivityCompat.requestPermissions(this,arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),1)
+        // 메인화면 진입 시 detailview 보여주기
+        bottom_navigation.selectedItemId = R.id.action_home
+        // 푸시메세지 토큰
+        registerPushToken()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+        setToolbarDefault()
+        when(p0.itemId){
+            R.id.action_home -> {
+                var detailViewFragment = DetailViewFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content,detailViewFragment).commit()
+                return true
+            }
+            R.id.action_search -> {
+                var gridFragment = GridFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content,gridFragment).commit()
+                return true
+            }
+            R.id.action_add_photo -> {
+                // 사진 권한 확인
+                if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+                    startActivity(Intent(this, AddPhotoActivity::class.java))
+                }
+                return true
+            }
+            R.id.action_favorite_alarm -> {
+                var alarmFragment = AlarmFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content,alarmFragment).commit()
+                return true
+            }
+            R.id.action_account -> {
+                var userFragment = UserFragment()
+                // uid 전달
+                var bundle = Bundle()
+                var uid = FirebaseAuth.getInstance().currentUser?.uid
+
+                bundle.putString("destinationUid",uid)
+                userFragment.arguments = bundle
+                supportFragmentManager.beginTransaction().replace(R.id.main_content,userFragment).commit()
+                return true
+            }
+        }
+        return false
+    }
+
+    fun registerPushToken(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            var token = task.result
+            var uid = FirebaseAuth.getInstance().currentUser?.uid
+            var map = mutableMapOf<String,Any>()
+            map["pushToken"] = token!!
+
+            FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
+        }
+    }
+
+    fun setToolbarDefault(){
+        toolbar_username.visibility = View.GONE
+        toolbar_btn_back.visibility = View.GONE
+        toolbar_title_image.visibility = View.VISIBLE
+    }
+
+    // account -> profile photo pick
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == UserFragment.PICK_PROFILE_FROM_ALBUM && resultCode == Activity.RESULT_OK){
+            var imageUri = data?.data
+            var uid = FirebaseAuth.getInstance().currentUser?.uid // 파일명
+            // storage
+            var storageRef = FirebaseStorage.getInstance().reference.child("userProfileImages").child(uid!!)
+            storageRef.putFile(imageUri!!).continueWithTask { task : Task<UploadTask.TaskSnapshot> ->
+                return@continueWithTask storageRef.downloadUrl
+            }.addOnSuccessListener { uri ->
+                var map = HashMap<String,Any>()
+                map["image"] = uri.toString()
+                FirebaseFirestore.getInstance().collection("profileImages").document(uid).set(map)
+            }
+
+        }
+    }
+
+}

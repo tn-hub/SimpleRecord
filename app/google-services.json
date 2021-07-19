@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "468373887294",
+    "project_id": "simplerecode",
+    "storage_bucket": "simplerecode.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468373887294:android:a12a2bf73809569b22346f",
+        "android_client_info": {
+          "package_name": "com.tnp.simplerecord"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "468373887294-j96v0l4eq68r4bk6nrenej7t66mnnrqp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tnp.simplerecord",
+            "certificate_hash": "7cdb4bc3147176bf7efdad5406543a8c80bb1f83"
+          }
+        },
+        {
+          "client_id": "468373887294-dhvvevhhu0kqofrkfhl8v7bi5pg5ddc7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtaK90nwd5YHhgeA8hIVIxEHDKEXg68Kc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "468373887294-dhvvevhhu0kqofrkfhl8v7bi5pg5ddc7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
